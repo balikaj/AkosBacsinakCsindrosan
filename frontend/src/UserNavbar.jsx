@@ -19,6 +19,7 @@ export default function UserNavbar({ logout }) {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/">Kezdőlap</Nav.Link>
+                        <Nav.Link as={Link} to="/users">felh</Nav.Link>
                         <Button variant="primary" type="submit" onClick={handleLogout}>
                             Kijelentkezés
                         </Button>

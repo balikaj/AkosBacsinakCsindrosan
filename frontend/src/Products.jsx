@@ -105,18 +105,17 @@ export default function Products() {
     }
     return (
         <div className="container mt-4">
-            <h1>Termékek</h1>
+            <h1>Felhasznalo</h1>
             <div className="row">
                 <div className="col-md-4 mb-4">
-                    <h2>Termék kiválasztása</h2>
+                    <h2>felhaszn</h2>
                     <Form.Select value={selectedId} onChange={e => selectProduct(e.target.value)}>
-                        <option value="">Új termék</option>
                         {products.map(product => (<option key={product.id}
                             value={product.id}>{product.name}</option>))}
                     </Form.Select>
                 </div>
                 <div className="col-md-8">
-                    <h2>{selectedId ? "Termék módosítása" : "Új termék hozzáadása"}</h2>
+                    <h2>{"Termék módosítása" }</h2>
                     <Form onSubmit={saveProduct}>
                         <Form.Group className="mb-3">
                             <Form.Label>Termék neve</Form.Label>

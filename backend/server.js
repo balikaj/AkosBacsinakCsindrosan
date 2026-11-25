@@ -78,6 +78,7 @@ app.post("/api/login", async (req, res) => {
         role: user.role,
       },
     });
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Szerverhiba!" });
@@ -142,6 +143,7 @@ app.put(
         !Number.isInteger(Number(price)) ||
         Number(price) <= 0
       ) {
+
         return res.status(400).json({ message: "Hibás adatok!" });
       }
 
@@ -178,6 +180,60 @@ app.delete(
     }
   },
 );
+
+app.get("/api/users", authMiddleware, async (req, res) => {
+  try {
+    const [users] = await db.query(
+      "SELECT id, name, email FROM users WHERE id = ?",
+      [req.user.id]
+    );
+    res.json(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Szerverhiba!" });
+  }
+});
+
+app.put("/api/users", authMiddleware, async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const id = req.user.id;
+
+    if (!name?.trim() || !email?.trim()) {
+      return res.status(400).json({ message: "Hibás adatok!" });
+    }
+
+    if (password && password.length < 8) {
+      return res.status(400).json({ message: "A jelszó legalább 8 karakter legyen!" });
+    }
+
+    let result;
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      [result] = await db.query(
+        "UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?",
+        [name, email, hashedPassword, id]
+      );
+    } else {
+      [result] = await db.query(
+        "UPDATE users SET name = ?, email = ? WHERE id = ?",
+        [name, email, id]
+      );
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Nincs ilyen felhasználó!" });
+    }
+
+    res.json({ message: "Felhasználói adatok módosítva!" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Szerverhiba történt!" });
+  }
+});
+
+
 app.listen(PORT, () => {
   console.log(`A szerver sikeresen fut a következő porton: ${PORT}`);
 });
